@@ -1,0 +1,31 @@
+name: Weekly Summary                 # ワークフロー名
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'             # 毎週月曜 09:00 JST（UTC 0:00）
+  workflow_dispatch: {}             # 手動トリガー
+
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install notion-client
+
+      - name: Run update_summary.py
+        env:
+          NOTION_TOKEN:    ${{ secrets.NOTION_TOKEN }}
+          DATABASE_ID:     ${{ secrets.DATABASE_ID }}
+          SUMMARY_PAGE_ID: ${{ secrets.SUMMARY_PAGE_ID }}
+        run: python update_summary.py
