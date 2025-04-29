@@ -38,8 +38,8 @@ for k, v in tally.items():
     md += f"- **{k}**: {v}件 ({pct:.1f}%)\n"
 
 # ── 5. サマリーページを上書き更新 ─────────────────────
-notion.pages.update(
-    page_id = PAGE_ID,
+notion.blocks.children.append(
+    block_id = PAGE_ID,                 # 32 桁の Page ID そのままで OK
     children = [{
         "object": "block",
         "type": "paragraph",
@@ -50,5 +50,7 @@ notion.pages.update(
         }
     }]
 )
-
+page_info = notion.pages.retrieve(PAGE_ID)      # 追加
+print(">>> 書き込むページ:", page_info["url"])  # 追加
+print(md)        # 生成した Markdown を出力
 print("✓ Notion サマリー更新完了")
